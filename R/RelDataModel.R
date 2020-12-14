@@ -224,7 +224,7 @@ length.RelDataModel <- function(x){
       l <- lapply(
          l,
          function(tm){
-            if(!is.null(tm$foreignKeys)){
+            if(length(tm$foreignKeys)>0){
                tm$foreignKeys <- tm$foreignKeys[which(unlist(lapply(
                   tm$foreignKeys,
                   function(fk){
@@ -1504,6 +1504,25 @@ confront_data <- function(
          several.ok=TRUE
       )
    }
+
+   ## Empty model and data
+   if(length(x)==0 && length(data)==0 && length(paths)==0){
+      toRet <- list(
+         model=x,
+         checks=checks,
+         n_max=n_max,
+         missingTables=NULL,
+         suppTables=NULL,
+         availableTables=NULL,
+         constraints=list(),
+         success=TRUE
+      )
+      if(verbose){
+         cat(format_confrontation_report(toRet))
+      }
+      return(invisible(toRet))
+   }
+
    ## Data files ----
    if(length(data)==0){
       stopifnot(is.character(paths), length(paths)>0)
@@ -1604,29 +1623,39 @@ confront_data <- function(
                }
             }
             ##
-            if(length(tfki$key$from)==1){
-               tfki_fid <- td %>% pull(tfki$key$from)
-               tfki_tid <- rtd %>% pull(tfki$key$to)
-            }else{
-               tfki_fid <- do.call(
-                  paste,
-                  c(
-                     unique(td[, tfki$key$from, drop=FALSE]),
-                     list(sep="_")
-                  )
-               )
-               tfki_tid <- do.call(
-                  paste,
-                  c(
-                     unique(rtd[, tfki$key$to, drop=FALSE]),
-                     list(sep="_")
-                  )
-               )
-            }
+            # if(length(tfki$key$from)==1){
+            #    tfki_fid <- td %>% pull(tfki$key$from)
+            #    tfki_tid <- rtd %>% pull(tfki$key$to)
+            # }else{
+            #    tfki_fid <- do.call(
+            #       paste,
+            #       c(
+            #          unique(td[, tfki$key$from, drop=FALSE]),
+            #          list(sep="_")
+            #       )
+            #    )
+            #    tfki_tid <- do.call(
+            #       paste,
+            #       c(
+            #          unique(rtd[, tfki$key$to, drop=FALSE]),
+            #          list(sep="_")
+            #       )
+            #    )
+            # }
             success <- TRUE
             message <- NULL
             if(tfki$cardinality["fmin"]>0){
-               if(any(!tfki_tid %in% tfki_fid)){
+               . <- NULL
+               mt <- dplyr::anti_join(
+                  dplyr::select(rtd, dplyr::all_of(tfki$key$to)) %>%
+                     dplyr::filter_all(any_vars(!is.na(.))),
+                  dplyr::select(td, dplyr::all_of(tfki$key$from)),
+                  by=dplyr::all_of(magrittr::set_names(
+                     tfki$key$from, tfki$key$to
+                  ))
+               )
+               # if(any(!tfki_tid %in% tfki_fid)){
+               if(nrow(mt)>0){
                   success <- FALSE
                   message <- paste(c(
                      message,
@@ -1638,7 +1667,17 @@ confront_data <- function(
                }
             }
             if(tfki$cardinality["tmin"]>0){
-               if(any(!tfki_fid %in% tfki_tid)){
+               . <- NULL
+               mt <- dplyr::anti_join(
+                  dplyr::select(td, dplyr::all_of(tfki$key$from)) %>%
+                     dplyr::filter_all(any_vars(!is.na(.))),
+                  dplyr::select(rtd, dplyr::all_of(tfki$key$to)),
+                  by=dplyr::all_of(magrittr::set_names(
+                     tfki$key$to, tfki$key$from
+                  ))
+               )
+               # if(any(!tfki_fid %in% tfki_tid)){
+               if(nrow(mt)>0){
                   success <- FALSE
                   message <- paste(c(
                      message,
@@ -1695,7 +1734,9 @@ identical_RelDataModel <- function(x, y, ...){
          toRet <- toRet && itoRet
       }
    }else{
-      message("Not the same tables")
+      if(length(x)>0){
+         message("Not the same tables")
+      }
    }
    return(toRet)
 }

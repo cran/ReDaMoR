@@ -747,10 +747,12 @@ buildServer <- function(
          ys <- 100
          if(!is.null(tn) && tn!="" && !tn %in% names(m)){
             m <- add_table(m, newTable=tn)
+            pr <- stats::rbeta(1, 9, 1)
+            pa <- stats::runif(1, 0, 2*pi)
             m <- m %>% update_table_display(
                tn,
-               px=xs*(2*stats::rbeta(1, 0.6, 0.6)-1),
-               py=ys*(2*stats::rbeta(1, 0.6, 0.6)-1)
+               px=xs*pr*cos(pa),
+               py=ys*pr*sin(pa)
             )
             model$new <- m
             removeModal()
@@ -1880,10 +1882,12 @@ buildServer <- function(
                }
                toAdd <- nm[tn]
                toAdd[[1]]$tableName <- ntn
+               pr <- stats::rbeta(1, 9, 1)
+               pa <- stats::runif(1, 0, 2*pi)
                toAdd[[1]]$display$x <- toAdd[[1]]$display$x +
-                  xs*(2*stats::rbeta(1, 0.3, 0.3)-1)
+                  xs*pr*cos(pa)
                toAdd[[1]]$display$y <- toAdd[[1]]$display$y +
-                  ys*(2*stats::rbeta(1, 0.3, 0.3)-1)
+                  ys*pr*sin(pa)
                names(toAdd) <- ntn
                nm <- c(nm, toAdd)
             }
@@ -2021,7 +2025,8 @@ buildServer <- function(
                5,
                div(
                   selectInput(
-                     "fkFromField", "", ftfields, multiple=FALSE, width="100%"
+                     "fkFromField", "", ftfields, multiple=FALSE, width="100%",
+                     selectize=FALSE
                   ),
                   class="fkFieldSel"
                )
@@ -2031,7 +2036,8 @@ buildServer <- function(
                5,
                div(
                   selectInput(
-                     "fkToField", "", ttfields, multiple=FALSE, width="100%"
+                     "fkToField", "", ttfields, multiple=FALSE, width="100%",
+                     selectize=FALSE
                   ),
                   class="fkFieldSel"
                )
@@ -2221,7 +2227,8 @@ buildServer <- function(
                      length(cmin)==0,
                      ifelse(tns[1]==ft, "0", "1"),
                      cmin
-                  )
+                  ),
+                  selectize=FALSE
                )
             ),
             column(
@@ -2234,7 +2241,8 @@ buildServer <- function(
                      length(cmax)==0,
                      ifelse(tns[1]==ft, "n", "1"),
                      cmax
-                  )
+                  ),
+                  selectize=FALSE
                )
             )
 
@@ -2265,7 +2273,8 @@ buildServer <- function(
                      length(cmin)==0,
                      ifelse(tns[1]!=ft, "0", "1"),
                      cmin
-                  )
+                  ),
+                  selectize=FALSE
                )
             ),
             column(
@@ -2278,7 +2287,8 @@ buildServer <- function(
                      length(cmax)==0,
                      ifelse(tns[1]!=ft, "n", "1"),
                      cmax
-                  )
+                  ),
+                  selectize=FALSE
                )
             )
 
@@ -2728,6 +2738,7 @@ buildServer <- function(
 #' @return The [RelDataModel] designed with the GUI.
 #'
 #' @import shiny
+#' @importFrom stats rbeta runif
 #'
 #' @export
 #'
