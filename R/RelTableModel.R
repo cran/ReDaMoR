@@ -10,7 +10,7 @@
 #'    + *comment*:  character
 #' - **primaryKey**: a character vector of any length. All
 #' values should be in fields$name
-#' - **foreignKeys**: a list of foreign keys. Each foreigned key is defined
+#' - **foreignKeys**: a list of foreign keys. Each foreign key is defined
 #' as a list with the following elements:
 #'    + *refTable*: a character vector of length one (the referenced table)
 #'    + *key*: a tibble with a "from" and a "to" columns
@@ -30,8 +30,9 @@
 #'    + *color*: single character value corresponding to the color of the table
 #'    + *comment*: single character value with some description of the table
 #'
-#' @import dplyr
-#' @importFrom magrittr %>%
+#' @details When defining a matrix, 3 and only 3 fields must be defined:
+#' 2 of types 'row' and 'column' and the 3rd of your choice. In this case
+#' primaryKey is defined automatically as the combination of row and column.
 #'
 #' @return A RelTableModel object.
 #'
@@ -68,6 +69,7 @@ RelTableModel <- function(l){
       # nrow(l$fields) > 0,
       is.character(l$fields$name),
       all(!is.na(l$fields$name)),
+      !any(duplicated(l$fields$name)),
       is.character(l$fields$type),
       all(!is.na(l$fields$type)),
       is.logical(l$fields$nullable),
@@ -87,8 +89,11 @@ RelTableModel <- function(l){
    ){
       attr(l$fields, att) <- NULL
    }
-   l$fields <- as_tibble(l$fields) %>%
-      select(c("name", "type", "nullable", "unique", "comment"))
+   l$fields <- dplyr::as_tibble(l$fields) %>%
+      dplyr::select(c("name", "type", "nullable", "unique", "comment")) %>%
+      dplyr::mutate("comment"=as.character(
+         ifelse(is.na(.data$comment), "", .data$comment)
+      ))
 
    ## * Primary key ----
    l$primaryKey <- sort(l$primaryKey)
@@ -99,8 +104,38 @@ RelTableModel <- function(l){
       ] <- TRUE
    }
 
-   ## * Field types ----
-   check_types(l$fields$type)
+   ## * Matrix and Field types ----
+   if(any(l$fields$type %in% c("row", "column"))){
+      if(!all(c("row", "column") %in% l$fields$type)){
+         stop("Both row and column should be provided when modelling a matrix")
+      }
+      if(nrow(l$fields) !=3 ){
+         stop("A matrix model should have 3 and only 3 fields")
+      }
+      if(length(unique(l$fields$type)) != 3){
+         stop(paste(
+            "A matrix model should have 3 fields":
+            "2 of types 'row' and 'column' and the 3rd of your choice"
+         ))
+      }
+      rcfields <- l$fields %>% dplyr::filter(.data$type %in% c("row", "column"))
+      if(any(rcfields$nullable)){
+         stop("Matrix row and column cannot be nullable")
+      }
+      if(any(rcfields$unique)){
+         stop(paste(
+            "The combination of row and column is unique (primary key)",
+            " but not row names and column names independently"
+         ))
+      }
+      l$primaryKey <- rcfields$name
+      if(setdiff(l$fields$type, c("row", "column"))=="base64"){
+         stop("A matrix cannot store base64 documents")
+      }
+      check_types(setdiff(l$fields$type, c("row", "column")))
+   }else{
+      check_types(l$fields$type)
+   }
 
    ## * Foreign keys ----
    if(!is.null(l$foreignKeys)){
@@ -133,7 +168,7 @@ RelTableModel <- function(l){
             ){
                attr(fk$key, att) <- NULL
             }
-            fk$key <- as_tibble(fk$key)
+            fk$key <- dplyr::as_tibble(fk$key)
             cnames <- c("fmin", "fmax", "tmin", "tmax")
             if("cardinality" %in% names(fko)){
                stopifnot(
@@ -217,7 +252,7 @@ RelTableModel <- function(l){
 }
 
 ###############################################################################@
-#' Check the object is  a [RelTableModel] object
+#' Check if the object is  a [RelTableModel] object
 #'
 #' @param x any object
 #'
@@ -227,6 +262,23 @@ RelTableModel <- function(l){
 #'
 is.RelTableModel <- function(x){
    inherits(x, "RelTableModel")
+}
+
+###############################################################################@
+#' Check if the object is a [RelTableModel] matrix object
+#'
+#' A matrix model is a special [RelTableModel] object with 3 and only 3 fields:
+#' 2 of types 'row' and 'column' and the 3rd of your choice.
+#'
+#' @param x any object
+#'
+#' @return A single logical: TRUE if x is a [RelTableModel] matrix object
+#'
+#' @export
+#'
+is.MatrixModel <- function(x){
+   inherits(x, "RelTableModel") &&
+      "row" %in% x$fields$type
 }
 
 ###############################################################################@
@@ -246,7 +298,7 @@ format.RelTableModel <- function(x, ...){
    ind <- NULL
    # uq <- NULL
    if(!is.null(it)){
-      it <- it %>% filter(.data$index!=0)
+      it <- it %>% dplyr::filter(.data$index!=0)
       ind <- unique(it$field)
       # uq <- unique(it$field[which(it$unique)])
    }
@@ -257,8 +309,11 @@ format.RelTableModel <- function(x, ...){
       }
    ))
    toRet <- paste0(
-      # sprintf("Database: %s", x$dbName), "\n",
-      sprintf("Table name: %s", x$tableName), "\n",
+      sprintf(
+         "Table name: %s%s",
+         x$tableName,
+         ifelse(is.MatrixModel(x), " (matrix)", "")
+      ), "\n",
       paste(
          apply(
             f, 1,
@@ -348,7 +403,7 @@ index_table <- function(x){
    toRet <- NULL
    i <- 0
    if(length(pk)>0){
-      toRet <- tibble(
+      toRet <- dplyr::tibble(
          index=i,
          field=pk,
          # unique=length(pk)==1
@@ -357,9 +412,9 @@ index_table <- function(x){
    }
    for(ci in ind){
       i <- i+1
-      toRet <- bind_rows(
+      toRet <- dplyr::bind_rows(
          toRet,
-         tibble(
+         dplyr::tibble(
             index=i,
             field=ci$fields,
             uniqueIndex=ci$unique
@@ -388,12 +443,15 @@ col_types <- function(x){
             function(y){
                switch(
                   y,
+                  "row"=readr::col_character(),
+                  "column"=readr::col_character(),
                   "integer"=readr::col_integer(),
                   "numeric"=readr::col_double(),
                   "logical"=readr::col_logical(),
                   "character"=readr::col_character(),
                   "Date"=readr::col_date(),
-                  "POSIXct"=readr::col_datetime()
+                  "POSIXct"=readr::col_datetime(),
+                  "base64"=readr::col_character()
                )
             }
          ),
@@ -445,6 +503,13 @@ correct_constraints <- function(x){
    if(length(x$indexes)>0){
       for(i in 1:length(x$indexes)){
          if(x$indexes[[i]]$unique && length(x$indexes[[i]]$fields)==1){
+            if(
+               x$fields[
+                  which(x$fields$name==x$indexes[[i]]$fields), "type"
+               ] %in% c("row", "column")
+            ){
+               stop("Matrix row and column cannot be unique individually")
+            }
             x$fields[
                which(x$fields$name==x$indexes[[i]]$fields), "unique"
                ] <- TRUE
@@ -452,7 +517,9 @@ correct_constraints <- function(x){
       }
    }
    ## Field uniqueness
-   uniqueFields <- x$fields %>% filter(.data$unique) %>% pull("name")
+   uniqueFields <- x$fields %>%
+      dplyr::filter(.data$unique) %>%
+      dplyr::pull("name")
    if(length(x$indexes)>0 && length(uniqueFields)>0){
       for(i in 1:length(x$indexes)){
          if(any(x$indexes[[i]]$fields %in% uniqueFields)){
@@ -468,7 +535,7 @@ correct_constraints <- function(x){
 #' Confront a [RelTableModel] to actual data
 #'
 #' @param x a [RelTableModel]
-#' @param d a data frame
+#' @param d a data frame or a matrix for matrix model
 #' @param checks a character vector with the name of optional checks to be done
 #' (Default: all of them c("unique", "not nullable"))
 #'
@@ -481,10 +548,6 @@ confront_table_data <- function(
    d,
    checks=c("unique", "not nullable")
 ){
-   stopifnot(is.RelTableModel(x))
-   stopifnot(
-      is.data.frame(d)
-   )
    ## Optional checks ----
    if(length(checks)>0){
       checks <- match.arg(
@@ -493,6 +556,59 @@ confront_table_data <- function(
          several.ok=TRUE
       )
    }
+   stopifnot(is.RelTableModel(x))
+   ## Matrix model ----
+   if(is.MatrixModel(x)){
+      vf <- x$fields %>% dplyr::filter(!.data$type %in% c("row", "column"))
+      toRet <- list(
+         missingFields = character(0),
+         suppFields = character(0),
+         availableFields = vf$name,
+         fields=list(),
+         success=TRUE
+      )
+      toRet$fields[[vf$name]] <- list(success=TRUE, message=NULL)
+      if(!inherits(d[1], vf$type)){
+         toRet$fields[[vf$name]]$success <- FALSE
+         toRet$success <- FALSE
+         toRet$fields[[vf$name]]$message <- paste(c(
+            toRet$fields[[vf$name]]$message,
+            sprintf(
+               'Unexpected "%s"',
+               paste(class(d[1]), collapse=", ")
+            )
+         ), collapse=" ")
+      }
+      if("not nullable" %in% checks){
+         mis <- sum(is.na(d))
+         if(mis!=0){
+            toRet$fields[[vf$name]]$message <- paste(c(
+               toRet$fields[[vf$name]]$message,
+               sprintf(
+                  'Missing values %s/%s = %s%s',
+                  mis, length(d), round(mis*100/length(d)), "%"
+               )
+            ), collapse=" ")
+            if(!vf$nullable){
+               toRet$fields[[vf$name]]$success <- FALSE
+               toRet$success <- FALSE
+            }
+         }
+      }
+      if("unique" %in% checks && vf$unique && any(duplicated(d))){
+         toRet$fields[[vf$name]]$success <- FALSE
+         toRet$success <- FALSE
+         toRet$fields[[vf$name]]$message <- paste(c(
+            toRet$fields[[vf$name]]$message,
+            "Some values are duplicated"
+         ), collapse=" ")
+      }
+      return(toRet)
+   }
+
+   stopifnot(
+      is.data.frame(d)
+   )
    ## Available fields ----
    missingFields <- setdiff(x$fields$name, colnames(d))
    suppFields <- setdiff(colnames(d), x$fields$name)
@@ -505,25 +621,27 @@ confront_table_data <- function(
       success=length(missingFields)==0 && length(suppFields)==0
    )
    ## Fields ----
-   for(i in 1:nrow(x$fields)){
-      fn <- x$fields$name[i]
-      ft <- x$fields$type[i]
-      fe <- x$fields$nullable[i]
-      fu <- x$fields$unique[i]
+   for(fn in availableFields){
+      ft <- x$fields$type[which(x$fields$name==fn)]
+      ft <- ifelse(ft %in% c("row", "column"), "character", ft)
+      fe <- x$fields$nullable[which(x$fields$name==fn)]
+      fu <- x$fields$unique[which(x$fields$name==fn)]
       toRet$fields[[fn]] <- list(success=TRUE, message=NULL)
-      if(!inherits(pull(d, !!fn), ft)){
-         toRet$fields[[fn]]$success <- FALSE
-         toRet$success <- FALSE
-         toRet$fields[[fn]]$message <- paste(c(
-            toRet$fields[[fn]]$message,
-            sprintf(
-               'Unexpected "%s"',
-               paste(class(pull(d, !!fn)), collapse=", ")
-            )
-         ), collapse=" ")
+      if(!inherits(dplyr::pull(d, !!fn), ft)){
+         if(ft!="base64" || !inherits(dplyr::pull(d, !!fn), "character")){
+            toRet$fields[[fn]]$success <- FALSE
+            toRet$success <- FALSE
+            toRet$fields[[fn]]$message <- paste(c(
+               toRet$fields[[fn]]$message,
+               sprintf(
+                  'Unexpected "%s"',
+                  paste(class(dplyr::pull(d, !!fn)), collapse=", ")
+               )
+            ), collapse=" ")
+         }
       }
       if("not nullable" %in% checks){
-         mis <- sum(is.na(pull(d, !!fn)))
+         mis <- sum(is.na(dplyr::pull(d, !!fn)))
          if(mis!=0){
             toRet$fields[[fn]]$message <- paste(c(
                toRet$fields[[fn]]$message,
@@ -538,7 +656,7 @@ confront_table_data <- function(
             }
          }
       }
-      if("unique" %in% checks && fu && any(duplicated(pull(d, !!fn)))){
+      if("unique" %in% checks && fu && any(duplicated(dplyr::pull(d, !!fn)))){
          toRet$fields[[fn]]$success <- FALSE
          toRet$success <- FALSE
          toRet$fields[[fn]]$message <- paste(c(
@@ -553,19 +671,58 @@ confront_table_data <- function(
       for(i in 1:length(x$indexes)){
          toRet$indexes[[i]] <- list()
          idx <- x$indexes[[i]]
-         if(!idx$unique){
-            toRet$indexes[[i]]$success <- TRUE
+         if(any(idx$fields %in% missingFields)){
+            toRet$indexes[[i]]$success <- FALSE
+            toRet$indexes[[i]]$message <- paste(c(
+               toRet$indexes[[i]]$message,
+               "Missing field"
+            ), collapse=" ")
+            toRet$success <- FALSE
          }else{
-            if(any(duplicated(d[,idx$fields]))){
-               toRet$indexes[[i]]$success <- FALSE
-               toRet$indexes[[i]]$message <- paste(c(
-                  toRet$indexes[[i]]$message,
-                  "Some values are duplicated"
-               ), collapse=" ")
-               toRet$success <- FALSE
-            }else{
+            if(!idx$unique){
                toRet$indexes[[i]]$success <- TRUE
+            }else{
+               if(any(duplicated(d[,idx$fields]))){
+                  toRet$indexes[[i]]$success <- FALSE
+                  toRet$indexes[[i]]$message <- paste(c(
+                     toRet$indexes[[i]]$message,
+                     "Some values are duplicated"
+                  ), collapse=" ")
+                  toRet$success <- FALSE
+               }else{
+                  toRet$indexes[[i]]$success <- TRUE
+               }
             }
+         }
+      }
+   }
+   if("not nullable" %in% checks && is.MatrixModel(x)){
+      if(!"indexes" %in% names(toRet)){
+         toRet$indexes <- list()
+      }
+      i <- length(toRet$indexes)+1
+      rf <- x$fields %>%
+         dplyr::filter(.data$type=="row") %>%
+         dplyr::pull("name")
+      cf <- x$fields %>%
+         dplyr::filter(.data$type=="column") %>%
+         dplyr::pull("name")
+      fe <- x$fields %>%
+         dplyr::filter(!.data$type %in% c("row", "column")) %>%
+         dplyr::pull("nullable")
+      ncells <- length(unique(d[,rf])) * length(unique(d[,cf]))
+      mis <- ncells - nrow(d)
+      if(mis > 0 ){
+         toRet$indexes[[i]]$message <- paste(c(
+            toRet$indexes[[i]]$message,
+            sprintf(
+               'Missing cells %s/%s = %s%s',
+               mis, ncells, round(mis*100/ncells), "%"
+            )
+         ), collapse=" ")
+         if(!fe){
+            toRet$indexes[[i]]$success <- FALSE
+            toRet$success <- FALSE
          }
       }
    }
@@ -595,8 +752,8 @@ identical_RelTableModel <- function(x, y, includeDisplay=TRUE){
 
    ## Fields ----
    toRet <- toRet && identical(
-      x$fields %>% arrange(.data$name),
-      y$fields %>% arrange(.data$name)
+      x$fields %>% dplyr::arrange(.data$name),
+      y$fields %>% dplyr::arrange(.data$name)
    )
 
    ## Primary key ----
@@ -637,7 +794,7 @@ identical_RelTableModel <- function(x, y, includeDisplay=TRUE){
       xfk <- lapply(
          x$foreignKeys,
          function(z){
-            z$key <- z$key %>% arrange(.data$from, .data$to)
+            z$key <- z$key %>% dplyr::arrange(.data$from, .data$to)
             return(z)
          }
       )
@@ -657,7 +814,7 @@ identical_RelTableModel <- function(x, y, includeDisplay=TRUE){
       yfk <- lapply(
          y$foreignKeys,
          function(z){
-            z$key <- z$key %>% arrange(.data$from, .data$to)
+            z$key <- z$key %>% dplyr::arrange(.data$from, .data$to)
             return(z)
          }
       )
@@ -715,18 +872,20 @@ get_foreign_keys.RelTableModel <- function(x){
       fk,
       function(k){
          to <- k$refTable
-         kt <- k$key %>% arrange(.data$from, .data$to)
-         tibble(
+         kt <- k$key %>% dplyr::arrange(.data$from, .data$to)
+         dplyr::tibble(
             to=to,
             ff=list(kt$from), tf=list(kt$to)
          ) %>%
-            bind_cols(as_tibble(t(k$cardinality))) %>%
+            dplyr::bind_cols(dplyr::as_tibble(t(k$cardinality))) %>%
             return()
       }
    ))
-   toRet %>% mutate(
+   toRet %>% dplyr::mutate(
       from=tn
    ) %>%
-      select("from", "ff", "to", "tf", "fmin", "fmax", "tmin", "tmax") %>%
+      dplyr::select(
+         "from", "ff", "to", "tf", "fmin", "fmax", "tmin", "tmax"
+      ) %>%
       return()
 }
