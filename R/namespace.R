@@ -4,7 +4,8 @@
 #' @import rintrojs
 #' @import visNetwork
 #' @import readr
-#' @importFrom utils packageName
+#' @importFrom Matrix sparseMatrix
+#' @importFrom utils packageName object.size
 #' @importFrom stats rbeta runif
 #' @importFrom graphics plot
 #' @importFrom markdown renderMarkdown
