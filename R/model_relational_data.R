@@ -49,7 +49,10 @@ buildUi <- function(fromR){
                if(fromR){
                   shiny::actionButton(
                      "done",
-                     list(shiny::icon("check", "fa-2x"), "Done")
+                     list(
+                        shiny::icon("check", "fa-2x", verify_fa=FALSE),
+                        "Done"
+                     )
                   ) %>%
                      shiny::div(title="Return the model in R session")
                }else{
@@ -60,22 +63,28 @@ buildUi <- function(fromR){
                class="mainButton",
                shiny::actionButton(
                   "import",
-                  list(shiny::icon("file-import", "fa-2x"), "Import")
+                  list(
+                     shiny::icon("file-import", "fa-2x", verify_fa=FALSE),
+                     "Import"
+                  )
                ),
                shiny::actionButton(
                   "export",
-                  list("Export", shiny::icon("file-export", "fa-2x"))
+                  list(
+                     "Export",
+                     shiny::icon("file-export", "fa-2x", verify_fa=FALSE)
+                  )
                )
             ),
             shiny::div(
                class="mainButton",
                shiny::actionButton(
                   "undo",
-                  list("Undo", shiny::icon("undo", "fa-2x"))
+                  list("Undo", shiny::icon("undo", "fa-2x", verify_fa=FALSE))
                ),
                shiny::actionButton(
                   "redo",
-                  list(shiny::icon("redo", "fa-2x"), "Redo")
+                  list(shiny::icon("redo", "fa-2x", verify_fa=FALSE), "Redo")
                ),
                title="Undo (Ctrl+Z) / Redo (Ctrl+Shift+Z)"
             ),
@@ -83,7 +92,7 @@ buildUi <- function(fromR){
                class="mainButton",
                shiny::actionButton(
                   "addTable", "Add table",
-                  icon=shiny::icon("plus-square", "fa-2x")
+                  icon=shiny::icon("plus-square", "fa-2x", verify_fa=FALSE)
                )
             ),
             shiny::div(
@@ -93,7 +102,8 @@ buildUi <- function(fromR){
             shiny::div(
                class="mainButton",
                shiny::actionButton(
-                  "doc", "", icon=shiny::icon("question-circle", "fa-2x")
+                  "doc", "",
+                  icon=shiny::icon("question-circle", "fa-2x", verify_fa=FALSE)
                ) %>% shiny::div(title="Help tour")
             )
          ),
@@ -141,7 +151,9 @@ buildUi <- function(fromR){
                      shiny::actionButton(
                         "selectAll",
                         label=NULL,
-                        icon=shiny::icon("object-group", "fa-2x"),
+                        icon=shiny::icon(
+                           "object-group", "fa-2x", verify_fa=FALSE
+                        ),
                         class="shrunkenButton"
                      ) %>% shiny::div(title="Select all tables")
                   ),
@@ -150,7 +162,9 @@ buildUi <- function(fromR){
                      shiny::actionButton(
                         "autoLayout",
                         label=NULL,
-                        icon=shiny::icon("pencil-ruler", "fa-2x"),
+                        icon=shiny::icon(
+                           "pencil-ruler", "fa-2x", verify_fa=FALSE
+                        ),
                         class="shrunkenButton"
                      ) %>% shiny::div(title="Auto layout the model")
                   ),
@@ -159,7 +173,9 @@ buildUi <- function(fromR){
                      shiny::actionButton(
                         "fitNet",
                         label=NULL,
-                        icon=shiny::icon("vector-square", "fa-2x"),
+                        icon=shiny::icon(
+                           "vector-square", "fa-2x", verify_fa=FALSE
+                        ),
                         class="shrunkenButton"
                      ) %>% shiny::div(title="Fit model")
                   )
@@ -559,7 +575,9 @@ buildServer <- function(
                      class="mainButton",
                      shiny::actionButton(
                         "docImp", "",
-                        icon=shiny::icon("question-circle", "fa-2x")
+                        icon=shiny::icon(
+                           "question-circle", "fa-2x", verify_fa=FALSE
+                        )
                      ),
                      title="Help tour"
                   )
@@ -609,7 +627,7 @@ buildServer <- function(
             shiny::actionButton(
                "importValidate",
                list(
-                  shiny::icon("file-import", "fa-2x"),
+                  shiny::icon("file-import", "fa-2x", verify_fa=FALSE),
                   "Merge with current model"
                )
             )
@@ -914,7 +932,7 @@ buildServer <- function(
                shiny::actionButton(
                   "refreshComment",
                   label=NULL,
-                  icon=shiny::icon("check", "fa-1x"),
+                  icon=shiny::icon("check", "fa-1x", verify_fa=FALSE),
                   class="disabled"
                ) %>% shiny::div(title="Update table comment", class="iblock"),
                class="rightBox"
@@ -948,7 +966,7 @@ buildServer <- function(
          ntn <- ifelse(is.na(ntn), "", ntn)
          cc <- ifelse(is.na(cc), "", cc)
          shiny::req(ntn!=cc)
-         shiny::icon("arrow-right", "fa-1x")
+         shiny::icon("arrow-right", "fa-1x", verify_fa=FALSE)
       })
       shiny::observe({
          input$refreshComment
@@ -992,7 +1010,9 @@ buildServer <- function(
                      shiny::tagList(
                         shiny::actionButton(
                            "addField", label="",
-                           icon=shiny::icon("plus-square", "fa-1x"),
+                           icon=shiny::icon(
+                              "plus-square", "fa-1x", verify_fa=FALSE
+                           ),
                            class="shrunkenButton"
                         ) %>%
                            shiny::div(
@@ -1001,7 +1021,9 @@ buildServer <- function(
                            ),
                         shiny::actionButton(
                            "selectAllFields", label="",
-                           icon=shiny::icon("check-double", "fa-1x"),
+                           icon=shiny::icon(
+                              "check-double", "fa-1x", verify_fa=FALSE
+                           ),
                            class="shrunkenButton"
                         ) %>%
                            shiny::div(
@@ -1083,7 +1105,9 @@ buildServer <- function(
             shiny::actionButton(
                "moveFieldUp",
                label="",
-               icon=shiny::icon("arrow-alt-circle-up", "fa-1x"),
+               icon=shiny::icon(
+                  "arrow-alt-circle-up", "fa-1x", verify_fa=FALSE
+               ),
                class="shrunkenButton"
             ) %>%
                shiny::div(
@@ -1093,7 +1117,9 @@ buildServer <- function(
             shiny::actionButton(
                "moveFieldDown",
                label="",
-               icon=shiny::icon("arrow-alt-circle-down", "fa-1x"),
+               icon=shiny::icon(
+                  "arrow-alt-circle-down", "fa-1x", verify_fa=FALSE
+               ),
                class="shrunkenButton"
             ) %>%
                shiny::div(
@@ -1106,7 +1132,7 @@ buildServer <- function(
                shiny::actionButton(
                   "updateField",
                   label="",
-                  icon=shiny::icon("edit", "fa-1x"),
+                  icon=shiny::icon("edit", "fa-1x", verify_fa=FALSE),
                   class="shrunkenButton"
                ) %>%
                   shiny::div(
@@ -1120,7 +1146,7 @@ buildServer <- function(
                shiny::actionButton(
                   "removeField",
                   label="",
-                  icon=shiny::icon("minus-square", "fa-1x"),
+                  icon=shiny::icon("minus-square", "fa-1x", verify_fa=FALSE),
                   class="shrunkenButton"
                ) %>% shiny::div(title="Remove field", class="iblock")
             },
@@ -1522,7 +1548,7 @@ buildServer <- function(
       output$primaryKey <- shiny::renderUI({
          selt <- selection$tables
          shiny::req(length(selt)==1)
-         mt <- shiny::isolate(model$x[[selt]])
+         mt <- model$x[[selt]]
          shiny::req(mt)
          selTable <- mt$tableName
          fnames <- mt$fields$name
@@ -1545,7 +1571,7 @@ buildServer <- function(
                shiny::actionButton(
                   "refreshPrimaryKey",
                   label=NULL,
-                  icon=shiny::icon("check", "fa-1x"),
+                  icon=shiny::icon("check", "fa-1x", verify_fa=FALSE),
                   class="disabled"
                ) %>% shiny::div(
                   title="Update table primary key",
@@ -1558,7 +1584,7 @@ buildServer <- function(
       shiny::observe({
          input$refreshPrimaryKey
          npk <- input$primaryKey
-         mt <- shiny::isolate(model$table)
+         mt <- model$table
          shiny::req(mt)
          selTable <- mt$tableName
          cpk <- mt$primaryKey
@@ -1576,14 +1602,14 @@ buildServer <- function(
       output$refreshPKH <- shiny::renderUI({
          input$refreshPrimaryKey
          npk <- input$primaryKey
-         mt <- shiny::isolate(model$table)
+         mt <- model$table
          shiny::req(mt)
          selTable <- mt$tableName
          cpk <- mt$primaryKey
          shiny::req(
             length(cpk)!=length(npk) || any(sort(cpk)!=sort(npk)),
          )
-         shiny::icon("arrow-right", "fa-1x")
+         shiny::icon("arrow-right", "fa-1x", verify_fa=FALSE)
       })
       shiny::observe({
          shiny::req(input$refreshPrimaryKey>0)
@@ -1608,7 +1634,7 @@ buildServer <- function(
       output$indexes <- shiny::renderUI({
          selt <- selection$tables
          shiny::req(length(selt)==1)
-         mt <- shiny::isolate(model$x[[selt]])
+         mt <- model$x[[selt]]
          shiny::req(mt)
          selTable <- mt$tableName
          fnames <- mt$fields$name
@@ -1621,7 +1647,7 @@ buildServer <- function(
                   shiny::uiOutput("updateIndexDiv", inline=TRUE),
                   shiny::actionButton(
                      "addIndex", label="",
-                     icon=shiny::icon("plus-square", "fa-1x"),
+                     icon=shiny::icon("plus-square", "fa-1x", verify_fa=FALSE),
                      class="shrunkenButton"
                   ) %>%
                      shiny::div(title="Add an index", class="iblock"),
@@ -1636,9 +1662,6 @@ buildServer <- function(
       output$indexTable <- DT::renderDT({
          selt <- selection$tables
          shiny::req(length(selt)==1)
-         mt <- shiny::isolate(model$x[[selt]])
-         # shiny::req(mt)
-         # selTable <- mt$tableName
          shiny::isolate(model$indexTable) %>%
             DT::datatable(
                rownames=TRUE,
@@ -1697,7 +1720,7 @@ buildServer <- function(
             shiny::actionButton(
                "updateIndex",
                label="",
-               icon=shiny::icon("edit", "fa-1x"),
+               icon=shiny::icon("edit", "fa-1x", verify_fa=FALSE),
                class="shrunkenButton"
             ) %>%
                shiny::div(
@@ -1707,7 +1730,7 @@ buildServer <- function(
             shiny::actionButton(
                "removeIndex",
                label="",
-               icon=shiny::icon("minus-square", "fa-1x"),
+               icon=shiny::icon("minus-square", "fa-1x", verify_fa=FALSE),
                class="shrunkenButton"
             ) %>%
                shiny::div(
@@ -1857,8 +1880,8 @@ buildServer <- function(
          shiny::req(length(selTable)>0 & length(selTable)<=2)
          shiny::actionButton(
             "addForeignKey", "Key",
-            icon=shiny::icon("plus", "fa-2x"),
-            # icon=shiny::icon("external-link-alt", "fa-2x"),
+            icon=shiny::icon("plus", "fa-2x", verify_fa=FALSE),
+            # icon=shiny::icon("external-link-alt", "fa-2x", verify_fa=FALSE),
             class="shrunkenButton"
          ) %>% shiny::div(
             title="Add a foreign key"
@@ -2100,7 +2123,9 @@ buildServer <- function(
                      2,
                      shiny::actionButton("confirmAddFK", "Add", disabled=TRUE),
                      shiny::tags$br(),
-                     shiny::icon("long-arrow-alt-right", "fa-2x"),
+                     shiny::icon(
+                        "long-arrow-alt-right", "fa-2x", verify_fa=FALSE
+                     ),
                      class="centerBox"
                   )
                }else{
@@ -2110,7 +2135,9 @@ buildServer <- function(
                      shiny::tags$br(),
                      shiny::actionButton(
                         "fkDirection", "",
-                        icon=shiny::icon("long-arrow-alt-right", "fa-2x")
+                        icon=shiny::icon(
+                           "long-arrow-alt-right", "fa-2x", verify_fa=FALSE
+                        )
                      ) %>% shiny::div(title="Change foreign key direction"),
                      class="centerBox"
                   )
@@ -2158,12 +2185,16 @@ buildServer <- function(
          if(ft==tns[1]){
             shiny::updateActionButton(
                session, "fkDirection",
-               icon=shiny::icon("long-arrow-alt-right", "fa-2x")
+               icon=shiny::icon(
+                  "long-arrow-alt-right", "fa-2x", verify_fa=FALSE
+               )
             )
          }else{
             shiny::updateActionButton(
                session, "fkDirection",
-               icon=shiny::icon("long-arrow-alt-left", "fa-2x")
+               icon=shiny::icon(
+                  "long-arrow-alt-left", "fa-2x", verify_fa=FALSE
+               )
             )
          }
       })
@@ -2262,7 +2293,9 @@ buildServer <- function(
                      shiny::tags$br(),
                      shiny::actionButton(
                         "addFkField", label="",
-                        icon=shiny::icon("plus-square", "fa-1x")
+                        icon=shiny::icon(
+                           "plus-square", "fa-1x", verify_fa=FALSE
+                        )
                      ) %>% shiny::div(title="Add key field")))
                }
             }
@@ -2332,7 +2365,7 @@ buildServer <- function(
             shiny::actionButton(
                "confirmRmFkField",
                label="",
-               icon=shiny::icon("minus-square", "fa-1x")
+               icon=shiny::icon("minus-square", "fa-1x", verify_fa=FALSE)
             ) %>% shiny::div(title="Remove key field")
          )
       })
@@ -2562,15 +2595,19 @@ buildServer <- function(
                      2,
                      shiny::actionButton("confirmUpdateFK", "Update"),
                      shiny::tags$br(),
-                     shiny::icon("long-arrow-alt-right", "fa-2x"),
+                     shiny::icon(
+                        "long-arrow-alt-right", "fa-2x", verify_fa=FALSE
+                     ),
                      class="centerBox"
                   )
                }else{
                   shiny::column(
                      2,
                      shiny::actionButton("confirmUpdateFK", "Update"),
-                     shiny::fluidPage$br(),
-                     shiny::icon("long-arrow-alt-left", "fa-2x"),
+                     shiny::tags$br(),
+                     shiny::icon(
+                        "long-arrow-alt-left", "fa-2x", verify_fa=FALSE
+                     ),
                      class="centerBox"
                   )
                },
@@ -2864,12 +2901,18 @@ buildServer <- function(
          shiny::fluidRow(
             shiny::column(6, shiny::downloadButton(
                "exportJson",
-               list(shiny::icon("file-code", "fa-2x"), "JSON"),
+               list(
+                  shiny::icon("file-code", "fa-2x", verify_fa=FALSE),
+                  "JSON"
+               ),
                class="exportButtons"
             )),
             shiny::column(6, shiny::downloadButton(
                "exportHtml",
-               list(shiny::icon("map", "fa-2x"), "HTML"),
+               list(
+                  shiny::icon("map", "fa-2x", verify_fa=FALSE),
+                  "HTML"
+               ),
                class="exportButtons"
             ))
          )
