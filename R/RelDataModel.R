@@ -594,14 +594,14 @@ fromDBM <- function(dbm){
    toRet <- lapply(
       tableName,
       function(tn){
-         return(RelTableModel(list(
+         return(RelTableModel(
             tableName=tn,
             fields=fields[[tn]],
             primaryKey=primaryKey[[tn]],
             foreignKeys=foreignKeys[[tn]],
             indexes=indexes[[tn]],
             display=display[[tn]]
-         )))
+         ))
       }
    ) %>% RelDataModel()
 
@@ -652,24 +652,24 @@ add_table <- function(x, newTable){
       stopifnot(
          length(newTable)==1
       )
-      newTable <- RelTableModel(list(
-         "tableName"=newTable,
-         "fields"=dplyr::tibble(
+      newTable <- RelTableModel(
+         tableName=newTable,
+         fields=dplyr::tibble(
             name=character(),
             type=character(),
             nullable=logical(),
             unique=logical(),
             comment=character()
          ),
-         "primaryKey"=NULL,
-         "foreignKeys"=NULL,
-         "indexes"=NULL,
-         "display"=list(
+         primaryKey=NULL,
+         foreignKeys=NULL,
+         indexes=NULL,
+         display=list(
             x=as.numeric(NA), y=as.numeric(NA),
             color=as.character(NA),
             comment=as.character(NA)
          )
-      ))
+      )
    }
    stopifnot(!newTable$tableName %in% names(x))
    x <- unclass(x)
@@ -1488,6 +1488,44 @@ update_table_display <- function(
    x[[tableName]]$display$color <- color
    x[[tableName]]$display$comment <- comment
    return(RelDataModel(x))
+}
+
+###############################################################################@
+#' Copy fields from one table to another in a [RelDataModel]
+#'
+#' @param x a [RelDataModel]
+#' @param from the name of the table from which the fields are taken
+#' @param to the name of the table to which the fields are copied
+#' @param fields the names of the fields to copy
+#'
+#' @return A [RelDataModel]
+#'
+#' @export
+#'
+copy_fields <- function(x, from, to, fields){
+   stopifnot(
+      is.RelDataModel(x),
+      is.character(from) && length(from)==1 && !is.na(from) &&
+         from %in% names(x),
+      is.character(to) && length(to)==1 && !is.na(to) &&
+         to %in% names(x),
+      is.character(fields) && length(fields)>0 && !any(is.na(fields)) &&
+         all(fields %in% x[[from]]$fields$name) &&
+         !any(fields %in% x[[to]]$fields$name)
+   )
+   for(f in fields){
+      ff <- dplyr::filter(x[[from]]$fields, .data$name==f)
+      x <- add_field(
+         x,
+         tableName=to,
+         name=f,
+         type=ff$type,
+         nullable=ff$nullable,
+         unique=ff$unique,
+         comment=ff$comment
+      )
+   }
+   return(x)
 }
 
 ###############################################################################@
