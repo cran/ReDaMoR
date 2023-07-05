@@ -1,9 +1,9 @@
-e5e9275c320e30db4ea659134d0acb9c *DESCRIPTION
+d979c3f7345a9135cee31bc8f68768b4 *DESCRIPTION
 1b152ece069eb30b8c121179929b69a7 *NAMESPACE
 c2ec88e8a88a1a2096f062138c1745a4 *R/PCKRESERVED.R
 38c786f6b5ed2c1139e79bd5316ba81a *R/RelDataModel.R
 dca558f2ed76ca1a9e64d5b123b901d5 *R/RelTableModel.R
-56bfa4dcd2226d08e0fc93855a14f91a *R/TYPEDEF.R
+8d3d263f6f0a0126dce9faabe2e2d9c5 *R/TYPEDEF.R
 01cf433814f09d6b12ddcb118e133a36 *R/df_to_model.R
 c8e1ade87035193a9cff3eda34d3f3dc *R/format_confrontation_report.R
 11667075b63b18df75f1a1847f4c0de0 *R/generics.R
@@ -13,11 +13,11 @@ c8e1ade87035193a9cff3eda34d3f3dc *R/format_confrontation_report.R
 49532d4a6b7356b9801a8b2c5ee808b8 *R/namespace.R
 bcd222735f760c4fb2ba5a7df54a8d80 *R/plot.RelDataModel.R
 24852cafe8083c3d61d02ce5af65f43b *R/readSQLDataModel.R
-a4f9d9a27ed7832ce1e34a775df97adf *build/vignette.rds
+8974a9f76540d9413110893b3e547828 *build/vignette.rds
 be42fffbff9feaf8bb60988e73779618 *inst/Documentation/rintrojs-steps.json
 eeec303b69d70a970738b36a5fe1b1e9 *inst/doc/ReDaMoR.R
-007e0061a4cfa3b8292aa7b416f1bc39 *inst/doc/ReDaMoR.Rmd
-7e8364b36e167aaa8598fd4744133f72 *inst/doc/ReDaMoR.html
+d5d0de065021f5fef84b03cb1812e641 *inst/doc/ReDaMoR.Rmd
+8f1d710921c790345b8ea381804af3a4 *inst/doc/ReDaMoR.html
 689b4b24f7e3d0c3e33d0e7373841f69 *inst/examples/GE-model.json
 17c6d45a5d6d893ade42876c6e729d91 *inst/examples/HPO-model.json
 930839edb23f0b89b717424fad82244b *inst/examples/HPO-model.sql
@@ -35,7 +35,7 @@ b6ff574073806acb2c1d62ec219b64c1 *inst/examples/ex_from_df.R
 273bf12f1451bc5ddb74cce06a7bb2af *inst/examples/ex_plot_model.R
 b8fd20a0fd6d80569bb950e88f1de064 *inst/examples/ex_read_json.R
 1a88b20f60b6e2f573f27cea56948a41 *inst/examples/ex_read_sql.R
-482a0ff7ebd553f4474c5cdd7969a1c0 *inst/pkgdown.yml
+7991b5b164c10dff622d63a207eb839e *inst/pkgdown.yml
 cc8db3c27e5ad26dae91dcd0238e909a *inst/www/ReDaMoR-first.png
 132067a926112ed9ae1b51bff2f93146 *inst/www/ReDaMoR.png
 3f3684da68aa12c5c82c5f18ea7e45a4 *inst/www/appElements.css
@@ -105,7 +105,7 @@ d3246e76be967be0695654835c6dc8a0 *man/update_field.Rd
 79b7d1880345c8a098a685fd4055f269 *man/update_table_display.Rd
 d80b7f2bba1020ef851204971f8dbbe0 *man/view_confrontation_report.Rd
 5da43bddfc557f6213384fdede36e893 *man/write_json_data_model.Rd
-007e0061a4cfa3b8292aa7b416f1bc39 *vignettes/ReDaMoR.Rmd
+d5d0de065021f5fef84b03cb1812e641 *vignettes/ReDaMoR.Rmd
 872cf11fc9c42318e017ff1aaced9cb2 *vignettes/img/Add-key-button.png
 6d075a31f0386d02c68a0dc5c1803b07 *vignettes/img/Add-key-interface.png
 132067a926112ed9ae1b51bff2f93146 *vignettes/img/ReDaMoR.png

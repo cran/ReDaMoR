@@ -1,7 +1,7 @@
 Package: ReDaMoR
 Type: Package
 Title: Relational Data Modeler
-Version: 0.7.1
+Version: 0.7.2
 Authors@R: c(
     person(
         "Patrice", "Godard",
@@ -33,7 +33,7 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 7.2.1
 NeedsCompilation: no
-Packaged: 2022-10-18 08:23:32 UTC; pgodard
+Packaged: 2023-07-04 10:01:14 UTC; pgodard
 Author: Patrice Godard [aut, cre, cph]
 Repository: CRAN
-Date/Publication: 2022-10-19 13:47:56 UTC
+Date/Publication: 2023-07-06 00:14:14 UTC
