@@ -8,8 +8,9 @@
 #' @param fields a tibble with the following columns:
 #'    - *name*: character
 #'    - *type*: character
-#'    - *nullable*: logical
-#'    - *comment*:  character
+#'    - *nullable*: logical (optional, defaults to TRUE)
+#'    - *unique*: logical (optional, defaults = FALSE)
+#'    - *comment*:  character (optional, defaults to NA_character_)
 #' @param primaryKey a character vector of any length. All
 #' values should be in fields$name
 #' @param foreignKeys a list of foreign keys. Each foreign key is defined
@@ -47,7 +48,11 @@ RelTableModel <- function(
       primaryKey=NULL,
       foreignKeys=NULL,
       indexes=NULL,
-      display=NULL
+      display=list(
+         x=as.numeric(NA), y=as.numeric(NA),
+         color=as.character(NA),
+         comment=as.character(NA)
+      )
 
 ){
 
@@ -75,7 +80,21 @@ RelTableModel <- function(
       "primaryKey", "foreignKeys", "indexes",
       "display"
    )
+   mandatoryFieldInfo <- c("name", "type")
    fieldInfo <- c("name", "type", "nullable", "unique", "comment")
+   stopifnot(
+      is.data.frame(l$fields),
+      all(mandatoryFieldInfo %in% colnames(l$fields))
+   )
+   if(!('nullable' %in% colnames(l$fields))) {
+      l$fields$nullable <- TRUE
+   }
+   if(!('unique' %in% colnames(l$fields))) {
+      l$fields$unique <- FALSE
+   }
+   if(!('comment' %in% colnames(l$fields))) {
+      l$fields$comment <- NA_character_
+   }
    stopifnot(
       all(tableInfo %in% names(l)),
       all(names(l) %in% tableInfo),
@@ -84,8 +103,6 @@ RelTableModel <- function(
       length(l$tableName)==1,
       !is.na(l$tableName),
 
-      is.data.frame(l$fields),
-      all(fieldInfo %in% colnames(l$fields)),
       all(colnames(l$fields) %in% fieldInfo),
       # nrow(l$fields) > 0,
       is.character(l$fields$name),
@@ -249,19 +266,24 @@ RelTableModel <- function(
    }
 
    ## * Display ----
-   if(!is.null(l$display)){
-      stopifnot(is.list(l$display))
-      dn <- c("x", "y", "color", "comment")
-      stopifnot(
-         all(names(l$display) %in% dn),
-         all(dn %in% names(l$display)),
-         is.numeric(l$display$x),
-         is.numeric(l$display$y),
-         is.character(l$display$color),
-         is.character(l$display$comment),
-         all(unlist(lapply(l$display, length))==1)
+   if(is.null(l$display)){
+      l$display <- list(
+         x=as.numeric(NA), y=as.numeric(NA),
+         color=as.character(NA),
+         comment=as.character(NA)
       )
    }
+   stopifnot(is.list(l$display))
+   dn <- c("x", "y", "color", "comment")
+   stopifnot(
+      all(names(l$display) %in% dn),
+      all(dn %in% names(l$display)),
+      is.numeric(l$display$x),
+      is.numeric(l$display$y),
+      is.character(l$display$color),
+      is.character(l$display$comment),
+      all(unlist(lapply(l$display, length))==1)
+   )
 
    ############################################################################@
    ## Creating the object ----

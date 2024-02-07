@@ -1,8 +1,8 @@
-d979c3f7345a9135cee31bc8f68768b4 *DESCRIPTION
+a72e0008fa02b50ea8b7a955541b431b *DESCRIPTION
 1b152ece069eb30b8c121179929b69a7 *NAMESPACE
 c2ec88e8a88a1a2096f062138c1745a4 *R/PCKRESERVED.R
 38c786f6b5ed2c1139e79bd5316ba81a *R/RelDataModel.R
-dca558f2ed76ca1a9e64d5b123b901d5 *R/RelTableModel.R
+a331e497018e76c375a9518548c272b3 *R/RelTableModel.R
 8d3d263f6f0a0126dce9faabe2e2d9c5 *R/TYPEDEF.R
 01cf433814f09d6b12ddcb118e133a36 *R/df_to_model.R
 c8e1ade87035193a9cff3eda34d3f3dc *R/format_confrontation_report.R
@@ -15,9 +15,9 @@ bcd222735f760c4fb2ba5a7df54a8d80 *R/plot.RelDataModel.R
 24852cafe8083c3d61d02ce5af65f43b *R/readSQLDataModel.R
 8974a9f76540d9413110893b3e547828 *build/vignette.rds
 be42fffbff9feaf8bb60988e73779618 *inst/Documentation/rintrojs-steps.json
-eeec303b69d70a970738b36a5fe1b1e9 *inst/doc/ReDaMoR.R
+3b4145ce92c329cfa74cdf2a052f193b *inst/doc/ReDaMoR.R
 d5d0de065021f5fef84b03cb1812e641 *inst/doc/ReDaMoR.Rmd
-8f1d710921c790345b8ea381804af3a4 *inst/doc/ReDaMoR.html
+a38d345ed833134fa399dd73bf7a28f3 *inst/doc/ReDaMoR.html
 689b4b24f7e3d0c3e33d0e7373841f69 *inst/examples/GE-model.json
 17c6d45a5d6d893ade42876c6e729d91 *inst/examples/HPO-model.json
 930839edb23f0b89b717424fad82244b *inst/examples/HPO-model.sql
@@ -35,7 +35,7 @@ b6ff574073806acb2c1d62ec219b64c1 *inst/examples/ex_from_df.R
 273bf12f1451bc5ddb74cce06a7bb2af *inst/examples/ex_plot_model.R
 b8fd20a0fd6d80569bb950e88f1de064 *inst/examples/ex_read_json.R
 1a88b20f60b6e2f573f27cea56948a41 *inst/examples/ex_read_sql.R
-7991b5b164c10dff622d63a207eb839e *inst/pkgdown.yml
+93a1d2edf174345e358782bd77b719dc *inst/pkgdown.yml
 cc8db3c27e5ad26dae91dcd0238e909a *inst/www/ReDaMoR-first.png
 132067a926112ed9ae1b51bff2f93146 *inst/www/ReDaMoR.png
 3f3684da68aa12c5c82c5f18ea7e45a4 *inst/www/appElements.css
@@ -44,7 +44,7 @@ cacbe0ab14787b544019d499e46e496c *inst/www/defChanges.css
 bf8489ca4d997e5f682fb53e029e4301 *inst/www/fromWeb.js
 e321418028a7af8af373495b0d8d4d83 *inst/www/interactions.js
 01fbe2a8cfedde1397f0f3411bad1f4e *man/RelDataModel.Rd
-0ee26f27552df889a727c85058051149 *man/RelTableModel.Rd
+03e285cba8ae3fec270b71e7f6c5951a *man/RelTableModel.Rd
 0f7fd28d12b7ebc221c9833f7b6b5e59 *man/SUPPTYPES.Rd
 8f37b39a0395d25ca4de17812a453c32 *man/add_field.Rd
 cd615250c0bb18caafe39cee77f38d2e *man/add_foreign_key.Rd
