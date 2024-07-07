@@ -1,12 +1,16 @@
 Package: ReDaMoR
 Type: Package
 Title: Relational Data Modeler
-Version: 0.7.4
+Version: 0.7.6
 Authors@R: c(
     person(
         "Patrice", "Godard",
         role = c("aut", "cre","cph"),
         email = "patrice.godard@gmail.com"
+    ),
+    person(
+        "Kai", "Lin",
+        role = c("ctb")
     )
     )
 Maintainer: Patrice Godard <patrice.godard@gmail.com>
@@ -31,9 +35,10 @@ Suggests: knitr, rmarkdown, igraph, base64enc
 License: GPL-3
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2024-02-02 11:12:29 UTC; pgodard
-Author: Patrice Godard [aut, cre, cph]
+Packaged: 2024-07-06 09:26:52 UTC; pgodard
+Author: Patrice Godard [aut, cre, cph],
+  Kai Lin [ctb]
 Repository: CRAN
-Date/Publication: 2024-02-07 06:20:02 UTC
+Date/Publication: 2024-07-07 09:50:02 UTC
