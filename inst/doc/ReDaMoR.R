@@ -35,10 +35,6 @@ plot(hpo_model)
 ## Edit the model
 # m <- model_relational_data(hpo_model)
 
-## ----eval=FALSE---------------------------------------------------------------
-# library(ReDaMoR)
-# model_relational_data()
-
 ## -----------------------------------------------------------------------------
 confrontation_report <- confront_data(
   hpo_model,
@@ -55,21 +51,21 @@ format_confrontation_report_md(
   confrontation_report,
   title="Example: Confrontation with original data",
   level=1, numbered=FALSE
-) %>%
+) |>
   cat()
 
 ## -----------------------------------------------------------------------------
 hpo_tables <- confrontation_report$data
 
 ## ----results='asis'-----------------------------------------------------------
-hpo_tables$HPO_diseases <- hpo_tables$HPO_diseases %>% slice(1:100)
+hpo_tables$HPO_diseases <- hpo_tables$HPO_diseases |> slice(1:100)
 hpo_tables$HPO_synonyms[1:10, "synonym"] <- NA
-hpo_tables$HPO_hp <- hpo_tables$HPO_hp %>% mutate(level=as.character(level))
-confront_data(hpo_model, hpo_tables, verbose=FALSE) %>%
+hpo_tables$HPO_hp <- hpo_tables$HPO_hp |> mutate(level=as.character(level))
+confront_data(hpo_model, hpo_tables, verbose=FALSE) |>
   format_confrontation_report_md(
     title="Example: Confrontation with altered data",
     level=1, numbered=FALSE
-  ) %>%
+  ) |>
     cat()
 
 ## -----------------------------------------------------------------------------
@@ -80,11 +76,11 @@ new_model <- df_to_model(
    list=names(hpo_tables), envir=as.environment(hpo_tables)
 )
 ## Guess constraints and auto layout ----
-new_model <- guess_constraints(new_model, data = hpo_tables) %>%
+new_model <- guess_constraints(new_model, data = hpo_tables) |>
    auto_layout(lengthMultiplier=250)
 
 ## Plot the model ----
-new_model %>%
+new_model |>
    plot()
 
 ## -----------------------------------------------------------------------------
